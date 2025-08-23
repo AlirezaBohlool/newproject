@@ -64,7 +64,7 @@ export const generateNonce = (): string => {
  * @param walletAddress - The wallet address
  * @param signature - The signature from the wallet
  * @param nonce - The nonce value
- * @param metadata - Optional metadata string
+ * @param metadata - The metadata string value (sent as metaData in content)
  * @param iso3 - Country code (default: 'USA')
  * @param referralCode - Referral code (default: 'default')
  * @returns A properly formatted wallet authentication request
@@ -73,7 +73,7 @@ export const createWalletAuthPayload = (
   walletAddress: string,
   signature: string,
   nonce: string,
-  metadata: string = "default-wallet",
+  metadata: string = "123",  // Use "123" as specified
   iso3: string = "USA",
   referralCode: string = "default"
 ) => {
@@ -83,7 +83,7 @@ export const createWalletAuthPayload = (
   }
 
   // Ensure metadata is not empty
-  const metadataValue = metadata && metadata.trim() !== '' ? metadata : "default-wallet";
+  const metadataValue = metadata && metadata.trim() !== '' ? metadata : "123";
 
   const payload = {
     iso3,
@@ -92,7 +92,7 @@ export const createWalletAuthPayload = (
     walletAddress: walletAddress.toLowerCase(),
     content: {
       nonce,
-      metadata: metadataValue,
+      metaData: metadataValue,  // Changed to metaData with capital D
     },
   };
 
@@ -100,6 +100,9 @@ export const createWalletAuthPayload = (
   console.log('🔍 Created auth payload:', JSON.stringify(payload, null, 2));
   console.log('🔍 Metadata value:', metadataValue);
   console.log('🔍 Metadata type:', typeof metadataValue);
+  console.log('🔍 MetaData field:', payload.content.metaData);
+  console.log('🔍 MetaData field type:', typeof payload.content.metaData);
+  console.log('🔍 MetaData field length:', payload.content.metaData.length);
   
   return payload;
 };

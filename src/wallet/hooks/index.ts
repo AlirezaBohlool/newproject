@@ -1,1 +1,1 @@
-export * from "./enhanced-wallet-auth";
+export * from "./auth-wallet";

@@ -51,7 +51,7 @@ export interface WalletAuthenticateRequest {
   walletAddress: string;
   content: {
     nonce: string;
-    metadata: string;
+    metaData: string;  // Changed to metaData with capital D
   };
 }
 

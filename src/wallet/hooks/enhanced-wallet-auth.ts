@@ -13,19 +13,18 @@ import {
 import { 
   createWalletAuthPayload, 
   isValidWalletAddress,
-  formatWalletAddress 
+  generateNonce
 } from "@/utils/wallet-utils";
 
 // Types
 interface AuthContent {
   nonce: string;
-  metaData: string;
+  metadata: string;
 }
 
 interface AuthResponse {
   result: {
     token: string;
-    // Add other properties as needed
   };
 }
 
@@ -43,7 +42,7 @@ interface DecodedToken {
 }
 
 interface UseEnhancedWalletLoginOptions {
-  metaData?: string;
+  metadata?: string;  // Fixed: changed from metaData to metadata
   onLoginSuccess?: (response: AuthResponse) => void;
   onLoginError?: (error: any) => void;
   onWalletSourceCreated?: (response: any) => void;
@@ -51,7 +50,7 @@ interface UseEnhancedWalletLoginOptions {
 
 export const useEnhancedWalletLogin = (options: UseEnhancedWalletLoginOptions = {}) => {
   const {
-    metaData = "1234",
+    metadata = "1234",  // Fixed: changed from metaData to metadata
     onLoginSuccess,
     onLoginError,
     onWalletSourceCreated,
@@ -77,40 +76,17 @@ export const useEnhancedWalletLogin = (options: UseEnhancedWalletLoginOptions = 
     }
   }, [isConnected, address]);
 
-  const fetchNonce = async (walletAddress: string): Promise<string> => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_DAPP_API}/api/v1/wallet/nonce`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            walletAddress,
-          }),
-        }
-      );
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch nonce: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data.result.nonce;
-    } catch (error) {
-      disconnect(); // Disconnect if there's an error
-      setWalletError("Failed to start authentication process");
-      throw error;
-    }
-  };
-
   const signMessage = async (nonce: string): Promise<string> => {
     try {
+      // Create the exact same content structure that will be sent to the API
       const content: AuthContent = {
         nonce,
-        metaData,
+        metadata: metadata,
       };
+      
+      // Log what we're signing for debugging
+      console.log('🔍 Signing message content:', JSON.stringify(content, null, 2));
+      
       const message = JSON.stringify(content);
       const messageHash = keccak256(stringToHex(message));
 
@@ -139,8 +115,13 @@ export const useEnhancedWalletLogin = (options: UseEnhancedWalletLoginOptions = 
         walletAddress,
         signature,
         nonce,
-        metaData
+        metadata,  // Fixed: changed from metaData to metadata
+        'USA',     // iso3 - use meaningful default
+        'default'  // referralCode - use meaningful default
       );
+
+      // Debug: Log the request payload
+      console.log('🔍 Sending authentication request:', JSON.stringify(authRequest, null, 2));
 
       // Use the RTK Query mutation
       const result = await authenticateWallet(authRequest).unwrap();
@@ -173,6 +154,9 @@ export const useEnhancedWalletLogin = (options: UseEnhancedWalletLoginOptions = 
       
       return { result: { token } };
     } catch (error) {
+      // Debug: Log the full error
+      console.error('❌ Authentication error details:', error);
+      
       setWalletError("Authentication failed");
       disconnect();
       throw error;
@@ -187,7 +171,8 @@ export const useEnhancedWalletLogin = (options: UseEnhancedWalletLoginOptions = 
     setGeneralError("");
 
     try {
-      const nonce = await fetchNonce(address.toLowerCase());
+      // Generate a random nonce instead of fetching from API
+      const nonce = generateNonce();
       const signature = await signMessage(nonce);
       const authResult = await walletLogin(
         signature.toLowerCase(),

@@ -48,29 +48,60 @@ export const generateRandomSeed = (length: number = 32): string => {
 };
 
 /**
+ * Generate a UUID-like nonce for wallet authentication
+ * @returns A unique nonce string
+ */
+export const generateNonce = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
+/**
  * Create a wallet authentication payload
  * @param walletAddress - The wallet address
  * @param signature - The signature from the wallet
- * @param seed - The seed/nonce value
- * @param metadata - Optional metadata
+ * @param nonce - The nonce value
+ * @param metadata - Optional metadata string
+ * @param iso3 - Country code (default: 'USA')
+ * @param referralCode - Referral code (default: 'default')
  * @returns A properly formatted wallet authentication request
  */
 export const createWalletAuthPayload = (
   walletAddress: string,
   signature: string,
-  seed: string,
-  metadata: string = 'default'
+  nonce: string,
+  metadata: string = "default-wallet",
+  iso3: string = "USA",
+  referralCode: string = "default"
 ) => {
-  return {
-    seed,
+  // Validate inputs
+  if (!walletAddress || !signature || !nonce) {
+    throw new Error('Missing required parameters: walletAddress, signature, and nonce are required');
+  }
+
+  // Ensure metadata is not empty
+  const metadataValue = metadata && metadata.trim() !== '' ? metadata : "default-wallet";
+
+  const payload = {
+    iso3,
+    referralCode,
     signature,
-    deviceIdentifier: generateDeviceIdentifier(),
     walletAddress: walletAddress.toLowerCase(),
-    random: {
-      value: generateRandomHex(),
-      metadata,
+    content: {
+      nonce,
+      metadata: metadataValue,
     },
   };
+
+  // Debug: Log the payload being created
+  console.log('🔍 Created auth payload:', JSON.stringify(payload, null, 2));
+  console.log('🔍 Metadata value:', metadataValue);
+  console.log('🔍 Metadata type:', typeof metadataValue);
+  
+  return payload;
 };
 
 /**

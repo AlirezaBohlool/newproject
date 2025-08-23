@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Base API configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_DAPP_API || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_DAPP_API || 'https://auth.exmodules.org';
 
 // Create axios instance with default config
 const apiClient = axios.create({
@@ -45,12 +45,12 @@ apiClient.interceptors.response.use(
 
 // Types based on the API documentation
 export interface WalletAuthenticateRequest {
-  seed: string;
+  iso3: string;
+  referralCode: string;
   signature: string;
-  deviceIdentifier: string;
   walletAddress: string;
-  random: {
-    value: string;
+  content: {
+    nonce: string;
     metadata: string;
   };
 }

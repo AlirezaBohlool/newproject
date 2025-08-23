@@ -1,14 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-// Types based on the API documentation
+// Types based on the actual API specification
 export interface WalletAuthenticateRequest {
-  seed: string;
-  signature: string;
-  deviceIdentifier: string;
-  walletAddress: string;
-  random: {
-    value: string;
-    metadata: string;
+  iso3: string;           // String value like "string"
+  referralCode: string;   // String value like "string"
+  signature: string;      // Wallet signature
+  walletAddress: string;  // Wallet address like "0x..."
+  content: {
+    nonce: string;        // UUID string like "01963112-176b-740e-8562-a1b898ddb641"
+    metadata: string;     // String value like "string"
   };
 }
 
@@ -26,29 +26,31 @@ export interface WalletSourceRequest {
 
 export interface WalletSourceResponse {
   statusCode: number;
-  result: {
-    walletName: string;
+  payload: {
+    transactionId: string;
+    nonce: string;
     wallet: string;
+    signature: string;
     createdAt: string;
-    updatedAt: string;
   };
   timestamp: string;
 }
 
 export interface ApiErrorResponse {
   statusCode: number;
-  message: {
+  error: string;
+  message: string | {
     msg: string;
     code: number;
   };
-  timestamp: string;
+  timestamp?: string;
 }
 
 // Create the API slice
 export const walletApi = createApi({
   reducerPath: 'walletApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_DAPP_API || 'http://localhost:3000',
+    baseUrl: process.env.NEXT_PUBLIC_DAPP_API || 'https://auth.exmodules.org',
     prepareHeaders: (headers, { getState }) => {
       // Add any auth headers if needed
       return headers;
@@ -62,12 +64,25 @@ export const walletApi = createApi({
         method: 'POST',
         body: credentials,
       }),
+      // Add error handling
+      async onQueryStarted(credentials, { queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } catch (error: any) {
+          console.error('🔍 RTK Query error details:', {
+            status: error?.error?.status,
+            data: error?.error?.data,
+            message: error?.error?.message,
+            originalError: error?.error?.originalStatus === 422 ? error?.error?.data : null
+          });
+        }
+      },
     }),
     
     // Create Wallet Source endpoint
     createWalletSource: builder.mutation<WalletSourceResponse, WalletSourceRequest>({
       query: (walletData) => ({
-        url: '/api/v1/wallet/source',
+        url: '/api/v1/wallet/save',
         method: 'POST',
         body: walletData,
       }),

@@ -1,6 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuthWallet } from '@/wallet/hooks/auth-wallet';
+import { useDisconnect } from '@reown/appkit/react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import RoleSelectionModal from './RoleSelectionModal';
+import { useSetRole } from '@/hooks/set-role';
+import { useRouter } from 'next/navigation';
 
 const Auth = () => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -8,6 +14,19 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [step, setStep] = useState<'connect' | 'sign' | 'authenticate'>('connect');
   const [referralCode, setReferralCode] = useState('DEMO123'); // Default referral code
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  
+  const { roles, token } = useSelector((state: RootState) => state.auth);
+  const { setRole, isLoading: setRoleLoading } = useSetRole();
+  const router = useRouter();
+
+  // Debug logging for roles
+  useEffect(() => {
+    console.log('🔍 Auth Component - Available roles:', roles);
+    console.log('🔍 Auth Component - Token available:', !!token);
+  }, [roles, token]);
+  
+  const { disconnect } = useDisconnect();
   
   const {
     isLoading,
@@ -19,10 +38,23 @@ const Auth = () => {
     handleAuth,
   } = useAuthWallet({
     metaData: "123",
-    iso3: "USA", // You can make this configurable or get from user preferences
-    referralCode, // Use the state value instead of empty string
+    iso3: "USA",
+    referralCode, // Use the state value
     mode,
-    onSuccess: () => setSubmitted(true),
+    onSuccess: () => {
+      // Check if user has roles to select from
+      if (roles && roles.length > 0) {
+        if (roles.length === 1) {
+          // Auto-set role if user has only one role
+          handleAutoSetRole(roles[0].roleId);
+        } else {
+          // Show modal if user has multiple roles
+          setShowRoleModal(true);
+        }
+      } else {
+        setSubmitted(true);
+      }
+    },
     onError: (err) => {
       console.error(`${mode} error:`, err);
       setError(err?.message || `${mode} failed`);
@@ -58,6 +90,32 @@ const Auth = () => {
     setStep('connect');
   };
 
+  const handleAutoSetRole = async (roleId: string) => {
+    if (!token) {
+      console.error('No token available for auto role setting');
+      return;
+    }
+
+    try {
+      console.log('🔄 Auto-setting role:', roleId);
+      await setRole(token, roleId);
+      console.log('✅ Role auto-set successfully');
+      setSubmitted(true);
+    } catch (error) {
+      console.error('❌ Failed to auto-set role:', error);
+      setError('Failed to set role automatically. Please try again.');
+    }
+  };
+
+  const handleReset = () => {
+    // Disconnect wallet and reset state for testing
+    disconnect();
+    setError('');
+    setSubmitted(false);
+    setStep('connect');
+    console.log('🔄 Reset completed - ready for new test');
+  };
+
   const getStepDescription = () => {
     switch (step) {
       case 'connect':
@@ -65,23 +123,23 @@ const Auth = () => {
       case 'sign':
         return 'Please sign the message in your wallet';
       case 'authenticate':
-        return 'Authenticating with the server...';
+        return `${mode === 'login' ? 'Logging in' : 'Registering'} with the server...`;
       default:
         return '';
     }
   };
 
   const getButtonText = () => {
-    if (isLoading) {
+    if (isLoading || setRoleLoading) {
       switch (step) {
         case 'connect':
           return 'Connecting...';
         case 'sign':
           return 'Waiting for signature...';
         case 'authenticate':
-          return 'Authenticating...';
+          return mode === 'login' ? 'Logging in...' : 'Registering...';
         default:
-          return 'Processing...';
+          return setRoleLoading ? 'Setting Role...' : 'Processing...';
       }
     }
     
@@ -89,7 +147,7 @@ const Auth = () => {
       return 'Connect Wallet';
     }
     
-    return mode === 'login' ? 'Login' : 'Complete Registration';
+    return mode === 'login' ? 'Login' : 'Register';
   };
 
   if (submitted) {
@@ -102,12 +160,17 @@ const Auth = () => {
           </h2>
           <p className="text-gray-600">
             {mode === 'login' 
-              ? 'Your wallet has been authenticated.'
-              : 'Your wallet has been authenticated and registered.'
+              ? 'Your wallet has been authenticated successfully.'
+              : 'Your wallet has been registered successfully.'
             }
+            {roles && roles.length === 1 && (
+              <span className="block mt-2">
+                Your role has been automatically set.
+              </span>
+            )}
           </p>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => router.push('/demo')}
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-500"
           >
             Go to Dashboard
@@ -138,31 +201,49 @@ const Auth = () => {
             <div className="bg-blue-50 p-4 rounded-lg">
               <div className="text-blue-800 font-medium mb-2">Current Step:</div>
               <div className="text-blue-700 text-sm">{getStepDescription()}</div>
+              {setRoleLoading && (
+                <div className="mt-2 text-blue-600 text-sm">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
+                    Setting your role automatically...
+                  </div>
+                </div>
+              )}
+              {roles && roles.length > 0 && (
+                <div className="mt-2 text-green-600 text-sm">
+                  ✓ Found {roles.length} role{roles.length > 1 ? 's' : ''} available
+                  {roles.length === 1 && (
+                    <span className="ml-1">(will be set automatically)</span>
+                  )}
+                </div>
+              )}
             </div>
           )}
           
-          {/* Referral Code Input */}
-          <div>
-            <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 mb-2">
-              Referral Code
-            </label>
-            <input
-              id="referralCode"
-              type="text"
-              value={referralCode}
-              onChange={(e) => setReferralCode(e.target.value)}
-              placeholder="Enter referral code"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              Leave empty to use default: DEMO123
-            </p>
-          </div>
+          {/* Referral Code Input - Only show for login mode */}
+          {mode === 'login' && (
+            <div>
+              <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 mb-2">
+                Referral Code
+              </label>
+              <input
+                id="referralCode"
+                type="text"
+                value={referralCode}
+                onChange={(e) => setReferralCode(e.target.value)}
+                placeholder="Enter referral code"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Default: DEMO123 (required for login)
+              </p>
+            </div>
+          )}
           
           <div>
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || setRoleLoading}
               className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-400 disabled:cursor-not-allowed"
             >
               {isLoading ? (
@@ -203,6 +284,14 @@ const Auth = () => {
               <div className="font-mono text-xs mt-1">
                 {address.slice(0, 6)}...{address.slice(-4)}
               </div>
+              {/* Reset button for testing */}
+              <button
+                type="button"
+                onClick={handleReset}
+                className="mt-2 text-xs text-red-600 hover:text-red-700 underline"
+              >
+                Reset for Testing
+              </button>
             </div>
           )}
 
@@ -221,6 +310,12 @@ const Auth = () => {
           </div>
         </form>
       </div>
+      
+      {/* Role Selection Modal */}
+      <RoleSelectionModal 
+        isOpen={showRoleModal} 
+        onClose={() => setShowRoleModal(false)} 
+      />
     </div>
   );
 };

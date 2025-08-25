@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 // Types based on the actual API specification
 export interface WalletAuthenticateRequest {
-  iso3: string;           // String value like "string"
-  referralCode: string;   // String value like "string"
+  iso3?: string;           // Optional: Only required for login
+  referralCode?: string;   // Optional: Only required for login
   signature: string;      // Wallet signature
   walletAddress: string;  // Wallet address like "0x..."
   content: {

@@ -4,10 +4,13 @@ import { mainnet, arbitrum } from "@reown/appkit/networks";
 import type { AppKitNetwork } from "@reown/appkit/networks";
 
 // Get projectId from https://cloud.reown.com
-export const projectId = process.env.NEXT_PUBLIC_WALLET_PROJECT_ID || "21321"; // this is a public projectId only to use on localhost
+// For development, you can use a test project ID or create your own
+export const projectId = process.env.NEXT_PUBLIC_WALLET_PROJECT_ID || "YOUR_PROJECT_ID_HERE";
 
-if (!projectId) {
-  throw new Error("Project ID is not defined");
+// Validate project ID
+if (!projectId || projectId === "YOUR_PROJECT_ID_HERE") {
+  console.warn("⚠️ Wallet Project ID not configured. Please set NEXT_PUBLIC_WALLET_PROJECT_ID in your .env.local file");
+  console.warn("🔗 Get a free project ID from: https://cloud.reown.com");
 }
 
 export const networks = [mainnet, arbitrum] as [

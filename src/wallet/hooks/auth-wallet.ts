@@ -90,10 +90,14 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
     } catch (error: any) {
       console.error('❌ Nonce fetch error:', error.response?.data || error.message);
       
+      // Handle specific error cases
       if (error.response?.status === 403) {
         setWalletError("Access forbidden. Please check your wallet permissions.");
       } else if (error.response?.status === 401) {
         setWalletError("Unauthorized. Please reconnect your wallet.");
+      } else if (error.response?.status === 409 || error.response?.data?.message?.includes('duplicate')) {
+        setWalletError("Duplicate nonce detected. Please disconnect and reconnect your wallet to get a fresh nonce.");
+        console.log('🔄 Duplicate nonce detected - recommend wallet disconnect/reconnect');
       } else {
         setWalletError("Failed to start authentication process");
       }
@@ -134,18 +138,33 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
   ): Promise<AuthResponse> => {
     try {
       console.log('🔑 Authenticating wallet with signature and nonce');
+      console.log('🔍 Mode:', mode);
+      console.log('🔍 Nonce being sent:', nonce);
+      
+      // Build request body based on mode
+      let requestBody: any = {
+        signature,
+        walletAddress,
+        content: {
+          nonce,
+          metaData,
+        },
+      };
+      
+      // Only include iso3 and referralCode for login mode
+      if (mode === 'login') {
+        requestBody.iso3 = iso3;
+        requestBody.referralCode = referralCode;
+        console.log('🔐 Login mode: Including iso3 and referralCode');
+      } else {
+        console.log('📝 Registration mode: Excluding iso3 and referralCode');
+      }
+      
+      console.log('📤 Sending request body:', JSON.stringify(requestBody, null, 2));
+      
       const response = await axios.post(
         `https://auth.exmodules.org/api/v1/user/wallet/authenticate`,
-        {
-          iso3,
-          referralCode,
-          signature,
-          walletAddress,
-          content: {
-            nonce,
-            metaData,
-          },
-        }
+        requestBody
       );
       
       console.log('✅ Authentication response:', response.data);
@@ -164,6 +183,7 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
         // Decode token to verify it's valid
         const decoded = jwtDecode<DecodedToken>(token);
         console.log('✅ Token decoded successfully');
+        console.log('🔍 Available roles:', decoded.roles);
         
         // Store the token
         dispatch(setToken(token));
@@ -198,23 +218,30 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
 
     try {
       console.log('🚀 Starting authentication process for:', address);
+      console.log('🔍 Mode:', mode);
+      
+      // Both login and register follow the same flow:
+      // 1. Get nonce from backend
+      // 2. Sign the content with nonce
+      // 3. Send authentication request (different fields based on mode)
       
       // Step 1: Get nonce
+      console.log('🔐 Fetching nonce from backend');
       const nonce = await fetchNonce(address.toLowerCase());
       console.log('📝 Got nonce:', nonce);
       
-      // Step 2: Sign message
+      // Step 2: Sign message with nonce
       const signature = await signMessage(nonce);
       console.log('✍️ Got signature:', signature);
       
-      // Step 3: Authenticate
+      // Step 3: Authenticate (send different fields based on mode)
       const authResult = await authenticateWallet(
         signature.toLowerCase(),
         address.toLowerCase(),
         nonce
       );
       
-      console.log('🎉 Authentication successful!');
+      console.log(`🎉 ${mode} successful!`);
       
       // Call onSuccess callback if provided
       if (onSuccess) {

@@ -15,9 +15,11 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
+      // Prioritize auth_token (from set-role) over token (from login/register)
       const token = localStorage.getItem('auth_token') || localStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+        console.log('🔐 Adding Authorization header with token');
       }
     }
     return config;
@@ -45,13 +47,13 @@ apiClient.interceptors.response.use(
 
 // Types based on the API documentation
 export interface WalletAuthenticateRequest {
-  iso3: string;
-  referralCode: string;
-  signature: string;
-  walletAddress: string;
+  iso3?: string;           // Optional: Only required for login
+  referralCode?: string;   // Optional: Only required for login
+  signature: string;      // Wallet signature
+  walletAddress: string;  // Wallet address like "0x..."
   content: {
-    nonce: string;
-    metaData: string;  // Changed to metaData with capital D
+    nonce: string;        // UUID string like "01963112-176b-740e-8562-a1b898ddb641"
+    metaData: string;     // String value like "string" (note: capital D)
   };
 }
 

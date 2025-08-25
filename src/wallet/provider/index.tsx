@@ -16,7 +16,7 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
 
-// Create the modal
+// Create the modal with error handling
 export const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
@@ -24,7 +24,7 @@ export const modal = createAppKit({
   metadata,
   themeMode: 'light',
   features: {
-    analytics: true // Optional - defaults to your Cloud configuration
+    analytics: false // Disable analytics to prevent 401/403 errors
   },
   themeVariables: {
     '--w3m-accent': '#000000',

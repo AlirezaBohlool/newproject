@@ -4,9 +4,11 @@ import { useAuthWallet } from '@/wallet/hooks/auth-wallet';
 import { useDisconnect } from '@reown/appkit/react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
+import { DecodedToken } from '@/store/auth';
 import RoleSelectionModal from './RoleSelectionModal';
 import { useSetRole } from '@/hooks/set-role';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 
 const Auth = () => {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -41,17 +43,35 @@ const Auth = () => {
     iso3: "USA",
     referralCode, // Use the state value
     mode,
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log('🎉 Authentication successful, response:', response);
+      
+      // Extract roles from the response token immediately
+      let responseRoles: any[] = [];
+      try {
+        if (response.result && response.result.token) {
+          const decoded = jwtDecode<DecodedToken>(response.result.token);
+          responseRoles = decoded.roles || [];
+          console.log('🔍 Roles from response token:', responseRoles);
+        }
+      } catch (error) {
+        console.error('❌ Failed to decode token from response:', error);
+      }
+      
       // Check if user has roles to select from
-      if (roles && roles.length > 0) {
-        if (roles.length === 1) {
+      if (responseRoles && responseRoles.length > 0) {
+        console.log('✅ Found roles, checking count:', responseRoles.length);
+        if (responseRoles.length === 1) {
           // Auto-set role if user has only one role
-          handleAutoSetRole(roles[0].roleId);
+          console.log('🔄 Auto-setting single role:', responseRoles[0].roleId);
+          handleAutoSetRole(responseRoles[0].roleId, response.result.token);
         } else {
           // Show modal if user has multiple roles
+          console.log('📋 Showing role selection modal for multiple roles');
           setShowRoleModal(true);
         }
       } else {
+        console.log('⚠️ No roles found, proceeding without role selection');
         setSubmitted(true);
       }
     },
@@ -64,6 +84,13 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent multiple submissions
+    if (isLoading || setRoleLoading) {
+      console.log('⚠️ Request already in progress, ignoring submission');
+      return;
+    }
+    
     setError('');
     setStep('connect');
     
@@ -90,15 +117,15 @@ const Auth = () => {
     setStep('connect');
   };
 
-  const handleAutoSetRole = async (roleId: string) => {
-    if (!token) {
+  const handleAutoSetRole = async (roleId: string, authToken: string) => {
+    if (!authToken) {
       console.error('No token available for auto role setting');
       return;
     }
 
     try {
       console.log('🔄 Auto-setting role:', roleId);
-      await setRole(token, roleId);
+      await setRole(authToken, roleId);
       console.log('✅ Role auto-set successfully');
       setSubmitted(true);
     } catch (error) {
@@ -209,7 +236,7 @@ const Auth = () => {
                   </div>
                 </div>
               )}
-              {roles && roles.length > 0 && (
+              {roles && roles.length > 0 && !setRoleLoading && (
                 <div className="mt-2 text-green-600 text-sm">
                   ✓ Found {roles.length} role{roles.length > 1 ? 's' : ''} available
                   {roles.length === 1 && (

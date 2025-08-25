@@ -92,6 +92,22 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
       
       // Handle specific error cases
       if (error.response?.status === 403) {
+        console.log('🔄 403 error - retrying after delay...');
+        // Wait a bit and retry once
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+          const retryResponse = await axios.post(
+            `https://auth.exmodules.org/api/v1/wallet/nonce`,
+            { wallet }
+          );
+          if (retryResponse.data.result && retryResponse.data.result.nonce) {
+            return retryResponse.data.result.nonce;
+          } else if (retryResponse.data.nonce) {
+            return retryResponse.data.nonce;
+          }
+        } catch (retryError) {
+          console.error('❌ Retry failed:', retryError);
+        }
         setWalletError("Access forbidden. Please check your wallet permissions.");
       } else if (error.response?.status === 401) {
         setWalletError("Unauthorized. Please reconnect your wallet.");
@@ -212,6 +228,12 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
   const handleAuth = async () => {
     if (!address) return;
 
+    // Prevent multiple simultaneous requests
+    if (isLoading) {
+      console.log('⚠️ Authentication already in progress, ignoring request');
+      return;
+    }
+
     setIsLoading(true);
     setWalletError("");
     setGeneralError("");
@@ -229,6 +251,9 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
       console.log('🔐 Fetching nonce from backend');
       const nonce = await fetchNonce(address.toLowerCase());
       console.log('📝 Got nonce:', nonce);
+      
+      // Small delay to prevent rate limiting
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // Step 2: Sign message with nonce
       const signature = await signMessage(nonce);

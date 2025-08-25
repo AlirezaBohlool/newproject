@@ -40,13 +40,16 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
 
   const handleRoleSelect = async () => {
     if (!selectedRoleId || !token) {
+      console.error('Missing roleId or token for role selection');
       return;
     }
 
     try {
+      console.log('🔄 Setting role:', selectedRoleId);
       await setRole(token, selectedRoleId);
+      console.log('✅ Role set successfully');
     } catch (error) {
-      console.error('Failed to set role:', error);
+      console.error('❌ Failed to set role:', error);
     }
   };
 

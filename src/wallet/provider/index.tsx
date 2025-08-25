@@ -10,8 +10,8 @@ const queryClient = new QueryClient()
 
 // Set up metadata
 const metadata = {
-  name: 'dapp',
-  description: 'this is a test app',
+  name: 'Wallet Authentication App',
+  description: 'Connect your wallet to authenticate',
   url: 'https://github.com/0xonerb/next-reown-appkit-ssr', // origin must match your domain & subdomain
   icons: ['https://avatars.githubusercontent.com/u/179229932']
 }
@@ -24,11 +24,16 @@ export const modal = createAppKit({
   metadata,
   themeMode: 'light',
   features: {
-    analytics: false // Disable analytics to prevent 401/403 errors
+    analytics: false, // Disable analytics to prevent 401/403 errors
+    // Disable additional authentication methods - show only wallet options
+    email: false,
+    socials: false,
+    onramp: false,
   },
+  // Customize the modal appearance and behavior
   themeVariables: {
     '--w3m-accent': '#000000',
-  }
+  },
 })
 
 function ContextProvider({ children, cookies }: { children: ReactNode; cookies: string | null }) {

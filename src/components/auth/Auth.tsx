@@ -179,13 +179,13 @@ const Auth = () => {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center p-24">
+      <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#0a0a0a]">
         <div className="w-full max-w-md space-y-8 text-center">
-          <div className="text-green-600 text-6xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold">
+          <div className="text-[#22c55e] text-6xl mb-4">✓</div>
+          <h2 className="text-2xl font-bold text-[#f5f5f5]">
             {mode === 'login' ? 'Login' : 'Registration'} Successful!
           </h2>
-          <p className="text-gray-600">
+          <p className="text-[#d4d4d4]">
             {mode === 'login' 
               ? 'Your wallet has been authenticated successfully.'
               : 'Your wallet has been registered successfully.'
@@ -198,7 +198,7 @@ const Auth = () => {
           </p>
           <button
             onClick={() => router.push('/demo')}
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-500"
+            className="w-full bg-[#ffd700] text-[#0a0a0a] py-2 px-4 rounded-md hover:bg-[#b8860b] transition-colors duration-200 font-semibold"
           >
             Go to Dashboard
           </button>
@@ -208,13 +208,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-24">
+    <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#0a0a0a]">
       <div className="w-full max-w-md space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight">
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-[#f5f5f5]">
             {mode === 'login' ? 'Login' : 'Register'} with Wallet
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-[#d4d4d4]">
             {mode === 'login' 
               ? 'Connect your wallet to sign in to your account'
               : 'Connect your wallet to create a new account'
@@ -225,19 +225,19 @@ const Auth = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {/* Progress Indicator */}
           {isConnected && (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="text-blue-800 font-medium mb-2">Current Step:</div>
-              <div className="text-blue-700 text-sm">{getStepDescription()}</div>
+            <div className="bg-[#1a1a1a] p-4 rounded-lg border border-[#333333]">
+              <div className="text-[#ffd700] font-medium mb-2">Current Step:</div>
+              <div className="text-[#d4d4d4] text-sm">{getStepDescription()}</div>
               {setRoleLoading && (
-                <div className="mt-2 text-blue-600 text-sm">
+                <div className="mt-2 text-[#ffd700] text-sm">
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#ffd700] mr-2"></div>
                     Setting your role automatically...
                   </div>
                 </div>
               )}
               {roles && roles.length > 0 && !setRoleLoading && (
-                <div className="mt-2 text-green-600 text-sm">
+                <div className="mt-2 text-[#22c55e] text-sm">
                   ✓ Found {roles.length} role{roles.length > 1 ? 's' : ''} available
                   {roles.length === 1 && (
                     <span className="ml-1">(will be set automatically)</span>
@@ -250,7 +250,7 @@ const Auth = () => {
           {/* Referral Code Input - Only show for login mode */}
           {mode === 'login' && (
             <div>
-              <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="referralCode" className="block text-sm font-medium text-[#f5f5f5] mb-2">
                 Referral Code
               </label>
               <input
@@ -259,9 +259,9 @@ const Auth = () => {
                 value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value)}
                 placeholder="Enter referral code"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-[#333333] rounded-md shadow-sm focus:outline-none focus:ring-[#ffd700] focus:border-[#ffd700] bg-[#1a1a1a] text-[#f5f5f5] placeholder-[#a3a3a3]"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-[#a3a3a3]">
                 Default: DEMO123 (required for login)
               </p>
             </div>
@@ -271,11 +271,11 @@ const Auth = () => {
             <button
               type="submit"
               disabled={isLoading || setRoleLoading}
-              className="group relative flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+              className="group relative flex w-full justify-center rounded-md bg-[#ffd700] px-3 py-2 text-sm font-semibold text-[#0a0a0a] hover:bg-[#b8860b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffd700] disabled:bg-[#a3a3a3] disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isLoading ? (
                 <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0a0a0a] mr-2"></div>
                   {getButtonText()}
                 </div>
               ) : (
@@ -286,19 +286,19 @@ const Auth = () => {
           
           {/* Error Messages */}
           {walletError && (
-            <div className="text-red-500 text-center text-sm bg-red-50 p-3 rounded-md">
+            <div className="text-[#ef4444] text-center text-sm bg-[#1a1a1a] p-3 rounded-md border border-[#ef4444]">
               <div className="font-medium">Wallet Error:</div>
               {walletError}
             </div>
           )}
           {generalError && (
-            <div className="text-red-500 text-center text-sm bg-red-50 p-3 rounded-md">
+            <div className="text-[#ef4444] text-center text-sm bg-[#1a1a1a] p-3 rounded-md border border-[#ef4444]">
               <div className="font-medium">General Error:</div>
               {generalError}
             </div>
           )}
           {error && (
-            <div className="text-red-500 text-center text-sm bg-red-50 p-3 rounded-md">
+            <div className="text-[#ef4444] text-center text-sm bg-[#1a1a1a] p-3 rounded-md border border-[#ef4444]">
               <div className="font-medium">Error:</div>
               {error}
             </div>
@@ -306,16 +306,16 @@ const Auth = () => {
           
           {/* Connection Status */}
           {isConnected && address && (
-            <div className="text-center text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
-              <div className="font-medium">Wallet Connected</div>
-              <div className="font-mono text-xs mt-1">
+            <div className="text-center text-sm text-[#d4d4d4] bg-[#1a1a1a] p-3 rounded-md border border-[#333333]">
+              <div className="font-medium text-[#ffd700]">Wallet Connected</div>
+              <div className="font-mono text-xs mt-1 text-[#f5f5f5]">
                 {address.slice(0, 6)}...{address.slice(-4)}
               </div>
               {/* Reset button for testing */}
               <button
                 type="button"
                 onClick={handleReset}
-                className="mt-2 text-xs text-red-600 hover:text-red-700 underline"
+                className="mt-2 text-xs text-[#ef4444] hover:text-[#dc2626] underline"
               >
                 Reset for Testing
               </button>
@@ -327,7 +327,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={toggleMode}
-              className="text-indigo-600 hover:text-indigo-500 text-sm"
+              className="text-[#ffd700] hover:text-[#b8860b] text-sm transition-colors duration-200"
             >
               {mode === 'login' 
                 ? "Don't have an account? Register here"

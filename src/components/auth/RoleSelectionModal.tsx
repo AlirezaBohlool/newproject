@@ -57,12 +57,12 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+      <div className="bg-[#1a1a1a] rounded-lg p-6 w-full max-w-md mx-4 border border-[#333333] shadow-2xl">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-[#f5f5f5] mb-2">
             Select Your Role
           </h2>
-          <p className="text-gray-600">
+          <p className="text-[#d4d4d4]">
             Choose the role you want to use for this session
           </p>
         </div>
@@ -73,8 +73,8 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
               key={role.roleId}
               className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
                 selectedRoleId === role.roleId
-                  ? 'border-indigo-500 bg-indigo-50'
-                  : 'border-gray-200 hover:border-gray-300'
+                  ? 'border-[#ffd700] bg-[#2a2a2a]'
+                  : 'border-[#333333] hover:border-[#404040] bg-[#1a1a1a]'
               }`}
             >
               <input
@@ -86,16 +86,16 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
                 className="sr-only"
               />
               <div className="flex-1">
-                <div className="font-medium text-gray-900 capitalize">
+                <div className="font-medium text-[#f5f5f5] capitalize">
                   {role.slug.replace(/_/g, ' ')}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-[#a3a3a3]">
                   Role ID: {role.roleId}
                 </div>
               </div>
               {selectedRoleId === role.roleId && (
-                <div className="w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                <div className="w-5 h-5 bg-[#ffd700] rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-[#0a0a0a] rounded-full"></div>
                 </div>
               )}
             </label>
@@ -103,8 +103,8 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="text-red-800 text-sm">
+          <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#ef4444] rounded-lg">
+            <div className="text-[#ef4444] text-sm">
               {typeof error.message === 'string' 
                 ? error.message 
                 : Array.isArray(error.message)
@@ -119,18 +119,18 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+            className="flex-1 px-4 py-2 text-[#f5f5f5] bg-[#2a2a2a] rounded-lg hover:bg-[#333333] disabled:opacity-50 transition-colors duration-200 border border-[#333333]"
           >
             Cancel
           </button>
           <button
             onClick={handleRoleSelect}
             disabled={!selectedRoleId || isLoading}
-            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2 bg-[#ffd700] text-[#0a0a0a] rounded-lg hover:bg-[#b8860b] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-semibold"
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0a0a0a] mr-2"></div>
                 Setting Role...
               </div>
             ) : (

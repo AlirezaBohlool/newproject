@@ -179,13 +179,13 @@ const Auth = () => {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#0a0a0a]">
-        <div className="w-full max-w-md space-y-8 text-center">
-          <div className="text-[#22c55e] text-6xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold text-[#f5f5f5]">
+      <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[var(--background)]">
+        <div className="w-full max-w-md space-y-8 text-center bg-[var(--card-bg)] p-8 rounded-lg border border-[var(--card-border)]">
+          <div className="text-[var(--success)] text-6xl mb-4">✓</div>
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] font-heading">
             {mode === 'login' ? 'Login' : 'Registration'} Successful!
           </h2>
-          <p className="text-[#d4d4d4]">
+          <p className="text-[var(--text-secondary)]">
             {mode === 'login' 
               ? 'Your wallet has been authenticated successfully.'
               : 'Your wallet has been registered successfully.'
@@ -198,7 +198,7 @@ const Auth = () => {
           </p>
           <button
             onClick={() => router.push('/demo')}
-            className="w-full bg-[#ffd700] text-[#0a0a0a] py-2 px-4 rounded-md hover:bg-[#b8860b] transition-colors duration-200 font-semibold"
+            className="w-full bg-[var(--button-primary)] text-[var(--button-primary-text)] py-2 px-4 rounded-md hover:bg-[var(--button-primary-hover)] transition-colors duration-200"
           >
             Go to Dashboard
           </button>
@@ -208,13 +208,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[#0a0a0a]">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-[var(--background)]">
+      <div className="w-full max-w-md space-y-8 bg-[var(--card-bg)] p-8 rounded-lg border border-[var(--card-border)]">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-[#f5f5f5]">
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-[var(--text-primary)] font-heading">
             {mode === 'login' ? 'Login' : 'Register'} with Wallet
           </h2>
-          <p className="mt-2 text-center text-sm text-[#d4d4d4]">
+          <p className="mt-2 text-center text-sm text-[var(--text-secondary)] font-body">
             {mode === 'login' 
               ? 'Connect your wallet to sign in to your account'
               : 'Connect your wallet to create a new account'
@@ -225,19 +225,19 @@ const Auth = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {/* Progress Indicator */}
           {isConnected && (
-            <div className="bg-[#1a1a1a] p-4 rounded-lg border border-[#333333]">
-              <div className="text-[#ffd700] font-medium mb-2">Current Step:</div>
-              <div className="text-[#d4d4d4] text-sm">{getStepDescription()}</div>
+            <div className="bg-[var(--info)] bg-opacity-10 p-4 rounded-lg border border-[var(--info)] border-opacity-20">
+              <div className="text-[var(--info)] font-medium mb-2">Current Step:</div>
+              <div className="text-[var(--text-secondary)] text-sm">{getStepDescription()}</div>
               {setRoleLoading && (
-                <div className="mt-2 text-[#ffd700] text-sm">
+                <div className="mt-2 text-[var(--info)] text-sm">
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#ffd700] mr-2"></div>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[var(--info)] mr-2"></div>
                     Setting your role automatically...
                   </div>
                 </div>
               )}
               {roles && roles.length > 0 && !setRoleLoading && (
-                <div className="mt-2 text-[#22c55e] text-sm">
+                <div className="mt-2 text-[var(--success)] text-sm">
                   ✓ Found {roles.length} role{roles.length > 1 ? 's' : ''} available
                   {roles.length === 1 && (
                     <span className="ml-1">(will be set automatically)</span>
@@ -250,7 +250,7 @@ const Auth = () => {
           {/* Referral Code Input - Only show for login mode */}
           {mode === 'login' && (
             <div>
-              <label htmlFor="referralCode" className="block text-sm font-medium text-[#f5f5f5] mb-2">
+              <label htmlFor="referralCode" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Referral Code
               </label>
               <input
@@ -259,9 +259,9 @@ const Auth = () => {
                 value={referralCode}
                 onChange={(e) => setReferralCode(e.target.value)}
                 placeholder="Enter referral code"
-                className="w-full px-3 py-2 border border-[#333333] rounded-md shadow-sm focus:outline-none focus:ring-[#ffd700] focus:border-[#ffd700] bg-[#1a1a1a] text-[#f5f5f5] placeholder-[#a3a3a3]"
+                className="w-full px-3 py-2 bg-[var(--input-bg)] border border-[var(--input-border)] rounded-md shadow-sm focus:outline-none focus:ring-[var(--input-focus)] focus:border-[var(--input-focus)] text-[var(--text-primary)] placeholder-[var(--text-muted)]"
               />
-              <p className="mt-1 text-xs text-[#a3a3a3]">
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
                 Default: DEMO123 (required for login)
               </p>
             </div>
@@ -271,11 +271,11 @@ const Auth = () => {
             <button
               type="submit"
               disabled={isLoading || setRoleLoading}
-              className="group relative flex w-full justify-center rounded-md bg-[#ffd700] px-3 py-2 text-sm font-semibold text-[#0a0a0a] hover:bg-[#b8860b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffd700] disabled:bg-[#a3a3a3] disabled:cursor-not-allowed transition-colors duration-200"
+              className="group relative flex w-full justify-center rounded-md bg-[var(--button-primary)] px-3 py-2 text-sm font-semibold text-[var(--button-primary-text)] hover:bg-[var(--button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--button-primary)] disabled:bg-[var(--text-muted)] disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isLoading ? (
                 <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0a0a0a] mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--button-primary-text)] mr-2"></div>
                   {getButtonText()}
                 </div>
               ) : (
@@ -286,19 +286,19 @@ const Auth = () => {
           
           {/* Error Messages */}
           {walletError && (
-            <div className="text-[#ef4444] text-center text-sm bg-[#1a1a1a] p-3 rounded-md border border-[#ef4444]">
+            <div className="text-[var(--error)] text-center text-sm bg-[var(--error)] bg-opacity-10 p-3 rounded-md border border-[var(--error)] border-opacity-20">
               <div className="font-medium">Wallet Error:</div>
               {walletError}
             </div>
           )}
           {generalError && (
-            <div className="text-[#ef4444] text-center text-sm bg-[#1a1a1a] p-3 rounded-md border border-[#ef4444]">
+            <div className="text-[var(--error)] text-center text-sm bg-[var(--error)] bg-opacity-10 p-3 rounded-md border border-[var(--error)] border-opacity-20">
               <div className="font-medium">General Error:</div>
               {generalError}
             </div>
           )}
           {error && (
-            <div className="text-[#ef4444] text-center text-sm bg-[#1a1a1a] p-3 rounded-md border border-[#ef4444]">
+            <div className="text-[var(--error)] text-center text-sm bg-[var(--error)] bg-opacity-10 p-3 rounded-md border border-[var(--error)] border-opacity-20">
               <div className="font-medium">Error:</div>
               {error}
             </div>
@@ -306,16 +306,16 @@ const Auth = () => {
           
           {/* Connection Status */}
           {isConnected && address && (
-            <div className="text-center text-sm text-[#d4d4d4] bg-[#1a1a1a] p-3 rounded-md border border-[#333333]">
-              <div className="font-medium text-[#ffd700]">Wallet Connected</div>
-              <div className="font-mono text-xs mt-1 text-[#f5f5f5]">
+            <div className="text-center text-sm text-[var(--text-secondary)] bg-[var(--secondary)] p-3 rounded-md border border-[var(--border-light)]">
+              <div className="font-medium text-[var(--text-primary)]">Wallet Connected</div>
+              <div className="font-mono text-xs mt-1 text-[var(--text-secondary)]">
                 {address.slice(0, 6)}...{address.slice(-4)}
               </div>
               {/* Reset button for testing */}
               <button
                 type="button"
                 onClick={handleReset}
-                className="mt-2 text-xs text-[#ef4444] hover:text-[#dc2626] underline"
+                className="mt-2 text-xs text-[var(--error)] hover:text-[var(--error)] underline"
               >
                 Reset for Testing
               </button>
@@ -327,7 +327,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={toggleMode}
-              className="text-[#ffd700] hover:text-[#b8860b] text-sm transition-colors duration-200"
+              className="text-[var(--primary)] hover:text-[var(--primary-dark)] text-sm transition-colors duration-200"
             >
               {mode === 'login' 
                 ? "Don't have an account? Register here"

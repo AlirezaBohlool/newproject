@@ -57,12 +57,12 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#1a1a1a] rounded-lg p-6 w-full max-w-md mx-4 border border-[#333333] shadow-2xl">
+      <div className="bg-[var(--card-bg)] rounded-lg p-6 w-full max-w-md mx-4 border border-[var(--card-border)]">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-[#f5f5f5] mb-2">
+          <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2 font-heading">
             Select Your Role
           </h2>
-          <p className="text-[#d4d4d4]">
+          <p className="text-[var(--text-secondary)] font-body">
             Choose the role you want to use for this session
           </p>
         </div>
@@ -73,8 +73,8 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
               key={role.roleId}
               className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
                 selectedRoleId === role.roleId
-                  ? 'border-[#ffd700] bg-[#2a2a2a]'
-                  : 'border-[#333333] hover:border-[#404040] bg-[#1a1a1a]'
+                  ? 'border-[var(--primary)] bg-[var(--primary)] bg-opacity-10'
+                  : 'border-[var(--border-light)] hover:border-[var(--primary)] hover:bg-[var(--primary)] hover:bg-opacity-5'
               }`}
             >
               <input
@@ -86,16 +86,16 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
                 className="sr-only"
               />
               <div className="flex-1">
-                <div className="font-medium text-[#f5f5f5] capitalize">
+                <div className="font-medium text-[var(--text-primary)] capitalize">
                   {role.slug.replace(/_/g, ' ')}
                 </div>
-                <div className="text-sm text-[#a3a3a3]">
+                <div className="text-sm text-[var(--text-secondary)]">
                   Role ID: {role.roleId}
                 </div>
               </div>
               {selectedRoleId === role.roleId && (
-                <div className="w-5 h-5 bg-[#ffd700] rounded-full flex items-center justify-center">
-                  <div className="w-2 h-2 bg-[#0a0a0a] rounded-full"></div>
+                <div className="w-5 h-5 bg-[var(--primary)] rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-[var(--button-primary-text)] rounded-full"></div>
                 </div>
               )}
             </label>
@@ -103,8 +103,8 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-[#1a1a1a] border border-[#ef4444] rounded-lg">
-            <div className="text-[#ef4444] text-sm">
+          <div className="mb-4 p-3 bg-[var(--error)] bg-opacity-10 border border-[var(--error)] border-opacity-20 rounded-lg">
+            <div className="text-[var(--error)] text-sm">
               {typeof error.message === 'string' 
                 ? error.message 
                 : Array.isArray(error.message)
@@ -119,18 +119,18 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 text-[#f5f5f5] bg-[#2a2a2a] rounded-lg hover:bg-[#333333] disabled:opacity-50 transition-colors duration-200 border border-[#333333]"
+            className="flex-1 px-4 py-2 text-[var(--text-primary)] bg-[var(--button-secondary)] rounded-lg hover:bg-[var(--button-secondary-hover)] disabled:opacity-50 transition-colors duration-200"
           >
             Cancel
           </button>
           <button
             onClick={handleRoleSelect}
             disabled={!selectedRoleId || isLoading}
-            className="flex-1 px-4 py-2 bg-[#ffd700] text-[#0a0a0a] rounded-lg hover:bg-[#b8860b] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-semibold"
+            className="flex-1 px-4 py-2 bg-[var(--button-primary)] text-[var(--button-primary-text)] rounded-lg hover:bg-[var(--button-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#0a0a0a] mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--button-primary-text)] mr-2"></div>
                 Setting Role...
               </div>
             ) : (

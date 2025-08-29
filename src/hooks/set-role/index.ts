@@ -97,10 +97,6 @@ export const useSetRole = (): UseSetRoleReturn => {
         roleId = decoded.roles?.[0].roleId;
       }
 
-      console.log("🚀 ~ setRole ~ roleId:", roleId);
-      console.log("🔍 ~ setRole ~ jwtToken:", jwtToken ? "Token provided" : "No token");
-      console.log("🔍 ~ setRole ~ decoded roles:", decoded?.roles);
-
       if (!roleId) {
         throw new Error(
           "No role ID provided and no roles found in current token"

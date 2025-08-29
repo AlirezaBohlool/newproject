@@ -21,12 +21,6 @@ const Auth = () => {
   const { roles, token } = useSelector((state: RootState) => state.auth);
   const { setRole, isLoading: setRoleLoading } = useSetRole();
   const router = useRouter();
-
-  // Debug logging for roles
-  useEffect(() => {
-    console.log('🔍 Auth Component - Available roles:', roles);
-    console.log('🔍 Auth Component - Token available:', !!token);
-  }, [roles, token]);
   
   const { disconnect } = useDisconnect();
   
@@ -44,7 +38,6 @@ const Auth = () => {
     referralCode, // Use the state value
     mode,
     onSuccess: (response) => {
-      console.log('🎉 Authentication successful, response:', response);
       
       // Extract roles from the response token immediately
       let responseRoles: any[] = [];
@@ -52,7 +45,6 @@ const Auth = () => {
         if (response.result && response.result.token) {
           const decoded = jwtDecode<DecodedToken>(response.result.token);
           responseRoles = decoded.roles || [];
-          console.log('🔍 Roles from response token:', responseRoles);
         }
       } catch (error) {
         console.error('❌ Failed to decode token from response:', error);
@@ -60,18 +52,14 @@ const Auth = () => {
       
       // Check if user has roles to select from
       if (responseRoles && responseRoles.length > 0) {
-        console.log('✅ Found roles, checking count:', responseRoles.length);
         if (responseRoles.length === 1) {
           // Auto-set role if user has only one role
-          console.log('🔄 Auto-setting single role:', responseRoles[0].roleId);
           handleAutoSetRole(responseRoles[0].roleId, response.result.token);
         } else {
           // Show modal if user has multiple roles
-          console.log('📋 Showing role selection modal for multiple roles');
           setShowRoleModal(true);
         }
       } else {
-        console.log('⚠️ No roles found, proceeding without role selection');
         setSubmitted(true);
       }
     },
@@ -87,7 +75,6 @@ const Auth = () => {
     
     // Prevent multiple submissions
     if (isLoading || setRoleLoading) {
-      console.log('⚠️ Request already in progress, ignoring submission');
       return;
     }
     
@@ -124,9 +111,7 @@ const Auth = () => {
     }
 
     try {
-      console.log('🔄 Auto-setting role:', roleId);
       await setRole(authToken, roleId);
-      console.log('✅ Role auto-set successfully');
       setSubmitted(true);
     } catch (error) {
       console.error('❌ Failed to auto-set role:', error);
@@ -140,7 +125,6 @@ const Auth = () => {
     setError('');
     setSubmitted(false);
     setStep('connect');
-    console.log('🔄 Reset completed - ready for new test');
   };
 
   const getStepDescription = () => {
@@ -197,7 +181,7 @@ const Auth = () => {
             )}
           </p>
           <button
-            onClick={() => router.push('/demo')}
+            onClick={() => router.push('/dashboard')}
             className="w-full bg-[var(--button-primary)] text-[var(--button-primary-text)] py-2 px-4 rounded-md hover:bg-[var(--button-primary-hover)] transition-colors duration-200"
           >
             Go to Dashboard

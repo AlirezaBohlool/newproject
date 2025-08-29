@@ -95,14 +95,6 @@ export const createWalletAuthPayload = (
       metaData: metadataValue,  // Changed to metaData with capital D
     },
   };
-
-  // Debug: Log the payload being created
-  console.log('🔍 Created auth payload:', JSON.stringify(payload, null, 2));
-  console.log('🔍 Metadata value:', metadataValue);
-  console.log('🔍 Metadata type:', typeof metadataValue);
-  console.log('🔍 MetaData field:', payload.content.metaData);
-  console.log('🔍 MetaData field type:', typeof payload.content.metaData);
-  console.log('🔍 MetaData field length:', payload.content.metaData.length);
   
   return payload;
 };

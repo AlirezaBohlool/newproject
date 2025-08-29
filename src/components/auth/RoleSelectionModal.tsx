@@ -23,18 +23,12 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
     }
   }, [roles, selectedRoleId]);
 
-  // Debug logging
-  useEffect(() => {
-    console.log('🔍 RoleSelectionModal - Available roles:', roles);
-    console.log('🔍 RoleSelectionModal - Selected role ID:', selectedRoleId);
-  }, [roles, selectedRoleId]);
-
   // Handle successful role selection
   useEffect(() => {
     if (isSuccess) {
       // Close modal and redirect to dashboard
       onClose();
-      router.push('/demo');
+      router.push('/dashboard');
     }
   }, [isSuccess, onClose, router]);
 
@@ -45,9 +39,7 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ isOpen, onClose
     }
 
     try {
-      console.log('🔄 Setting role:', selectedRoleId);
       await setRole(token, selectedRoleId);
-      console.log('✅ Role set successfully');
     } catch (error) {
       console.error('❌ Failed to set role:', error);
     }

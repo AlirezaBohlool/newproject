@@ -1,5 +1,10 @@
+import AuthGuard from '@/components/auth/AuthGuard';
 import Auth from '@/components/auth/Auth';
 
 export default function AuthPage() {
-  return <Auth />;
+  return (
+    <AuthGuard requireAuth={false}>
+      <Auth />
+    </AuthGuard>
+  );
 }

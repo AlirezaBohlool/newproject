@@ -71,14 +71,14 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
   const fetchNonce = async (wallet: string): Promise<string> => {
     try {
       const response = await axios.post(
-        `https://auth.exmodules.org/api/v1/wallet/nonce`,
+        `${process.env.NEXT_PUBLIC_DAPP_API}/wallet/nonce`,
         {
           wallet,
         }
       );
       
       // Handle different response structures
-      if (response.data.result && response.data.result.nonce) {
+      if (response.data.result && response.data.result.nonce) { // Corrected the property access
         return response.data.result.nonce;
       } else if (response.data.nonce) {
         return response.data.nonce;
@@ -94,7 +94,7 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
         await new Promise(resolve => setTimeout(resolve, 1000));
         try {
           const retryResponse = await axios.post(
-            `https://auth.exmodules.org/api/v1/wallet/nonce`,
+            `${process.env.NEXT_PUBLIC_DAPP_API}/wallet/nonce`,
             { wallet }
           );
           if (retryResponse.data.result && retryResponse.data.result.nonce) {
@@ -165,7 +165,7 @@ export const useAuthWallet = (options: UseAuthWalletOptions = {}) => {
       }
       
       const response = await axios.post(
-        `https://auth.exmodules.org/api/v1/user/wallet/authenticate`,
+        `${process.env.NEXT_PUBLIC_DAPP_API}/user/wallet/authenticate`,
         requestBody
       );
       

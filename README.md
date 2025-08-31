@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ChatBot - دستیار هوشمند
 
-## Getting Started
+یک رابط کاربری مشابه ChatGPT با قابلیت چت و مدیریت پکیج‌ها
 
-First, run the development server:
+## ویژگی‌ها
+
+### 🎯 رابط کاربری مشابه ChatGPT
+- طراحی مدرن و زیبا با رنگ‌بندی سبز ChatGPT
+- سایدبار سمت چپ با ناوبری آسان
+- رابط کاربری فارسی و کاربرپسند
+
+### 💬 قابلیت چت
+- شروع چت جدید
+- تاریخچه چت‌ها
+- نمایش پیام‌ها با timestamp
+- رابط کاربری تعاملی
+
+### 📦 مدیریت پکیج‌ها
+- **پکیج پایه**: رایگان با 5 چت در روز
+- **پکیج حرفه‌ای**: 99,000 تومان در ماه با چت نامحدود
+- **پکیج سازمانی**: راه‌حل سفارشی برای سازمان‌ها
+
+## تکنولوژی‌ها
+
+- **Next.js 14** - فریم‌ورک React
+- **TypeScript** - تایپ‌سیفای
+- **Tailwind CSS v4** - فریم‌ورک CSS
+- **CSS Variables** - سیستم رنگ‌بندی سفارشی
+
+## نصب و اجرا
 
 ```bash
+# نصب وابستگی‌ها
+npm install
+
+# اجرای پروژه در حالت توسعه
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# ساخت پروژه برای تولید
+npm run build
+
+# اجرای پروژه تولید شده
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ساختار پروژه
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── app/                    # صفحات Next.js
+│   ├── page.tsx          # صفحه اصلی
+│   └── globals.css       # استایل‌های سراسری
+├── components/            # کامپوننت‌های React
+│   └── chat/             # کامپوننت‌های چت
+│       ├── MainInterface.tsx      # رابط اصلی
+│       ├── ChatInterface.tsx      # رابط چت
+│       └── PackagesInterface.tsx  # رابط پکیج‌ها
+└── store/                # مدیریت state
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## نحوه استفاده
 
-## Learn More
+1. **شروع چت**: روی دکمه "چت جدید" کلیک کنید
+2. **انتخاب چت**: از تاریخچه چت‌ها، چت مورد نظر را انتخاب کنید
+3. **ارسال پیام**: پیام خود را در فیلد ورودی تایپ کرده و ارسال کنید
+4. **تغییر به پکیج**: از تب "پکیج" برای مشاهده و انتخاب پلن استفاده کنید
 
-To learn more about Next.js, take a look at the following resources:
+## رنگ‌بندی
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+پروژه از رنگ‌بندی مشابه ChatGPT استفاده می‌کند:
+- **رنگ اصلی**: `#10a37f` (سبز ChatGPT)
+- **پس‌زمینه**: `#ffffff` (سفید)
+- **متن**: `#374151` (خاکستری تیره)
+- **مرزها**: `#e5e7eb` (خاکستری روشن)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## مشارکت
 
-## Deploy on Vercel
+برای مشارکت در پروژه:
+1. پروژه را fork کنید
+2. شاخه جدیدی برای ویژگی خود ایجاد کنید
+3. تغییرات را commit کنید
+4. Pull Request ارسال کنید
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## لایسنس
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+این پروژه تحت لایسنس MIT منتشر شده است.

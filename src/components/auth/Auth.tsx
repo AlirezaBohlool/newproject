@@ -181,10 +181,10 @@ const Auth = () => {
             )}
           </p>
           <button
-            onClick={() => router.push('/dashboard')}
+            onClick={() => router.push('/')}
             className="w-full bg-[var(--button-primary)] text-[var(--button-primary-text)] py-2 px-4 rounded-md hover:bg-[var(--button-primary-hover)] transition-colors duration-200"
           >
-            Go to Dashboard
+            شروع چت
           </button>
         </div>
       </div>
